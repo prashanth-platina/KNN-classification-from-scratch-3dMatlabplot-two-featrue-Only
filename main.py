@@ -10,17 +10,26 @@ new_point = [6,4,7]
 def euclidean_distance(p,q):
     return np.sqrt(np.sum((p-q)**2))
 class KNN:
-    def __init__(self,k=3):
-        self.k = k
+    def __init__(self,radius):
+        self.radius = radius
+        self.k = 3
 
     def fit(self,X,y):
         self.X = X
         self.y = y
     def predict(self,new_point):
         distances = []
+        near_points = []
         for i in range(len(self.X)):
             distance = euclidean_distance(self.X[i],new_point)
             distances.append([distance,self.y[i]])
+            if(distance <= self.radius):
+                near_points.append([distance,self.y[i]])
+        if(len(near_points) !=0):
+            labels = [label for _,label in near_points]
+            result = Counter(labels).most_common(1)[0][0]
+            return result
+            
         distances.sort()
         nearest_neighbors = distances[:self.k]
         
@@ -29,7 +38,7 @@ class KNN:
         return result
 
 
-clf = KNN()
+clf = KNN(5.10)
 clf.fit(X,y)
 predicted_color = clf.predict(new_point)
 print(predicted_color)
